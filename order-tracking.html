@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Your Order Tracking</h1>
+        <div id="trackingInfo">
+            <p>Your tracking number: <span id="trackingNumber">N/A</span></p>
+            <p>Customers waiting in queue: <span id="customerInQueue">0</span></p>
+            <p>VIP Orders: <span id="vipOrders">0</span></p>
+            <p>Normal Orders: <span id="normalOrders">0</span></p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const trackingNumber = localStorage.getItem("trackingNumber") || "N/A";
+            let customerInQueue = localStorage.getItem("customersCount") || "0";
+            let totalVipOrders = localStorage.getItem("vipOrdersCount") || "0";
+            let totalNormalOrders = localStorage.getItem("normalOrdersCount") || "0";
+            let totalOrders = parseInt(totalVipOrders) + parseInt(totalNormalOrders);
+
+            const trackingNumberElement = document.getElementById("trackingNumber");
+            const customerInQueueElement = document.getElementById("customerInQueue");
+            const vipOrdersElement = document.getElementById("vipOrders");
+            const normalOrdersElement = document.getElementById("normalOrders");
+            const remainingOrdersElement = document.getElementById("remainingOrders");
+
+            trackingNumberElement.textContent = trackingNumber;
+            customerInQueueElement.textContent = customerInQueue;
+            vipOrdersElement.textContent = totalVipOrders;
+            normalOrdersElement.textContent = totalNormalOrders;
+            remainingOrdersElement.textContent = totalOrders;
+
+            function updateOrderTracking() {
+                const remainingOrders = localStorage.getItem("remainingOrders") || "0";
+                const customerInQueue = localStorage.getItem("customersCount") || "0";
+                const totalVipOrders = localStorage.getItem("vipOrdersCount") || "0";
+
+                const remainingOrdersElement = document.getElementById("remainingOrders");
+                const customerInQueueElement = document.getElementById("customerInQueue");
+                const vipOrdersElement = document.getElementById("vipOrders");
+
+                remainingOrdersElement.textContent = remainingOrders;
+                customerInQueueElement.textContent = customerInQueue;
+                vipOrdersElement.textContent = totalVipOrders;
+            }
+
+            updateOrderTracking();
+
+            // Listen for orderUpdate event
+            window.addEventListener('orderUpdate', updateOrderTracking);
+
+            // Listen for changes in localStorage
+            window.addEventListener('storage', (event) => {
+                if (event.key === "customersCount") {
+                    customerInQueueElement.textContent = event.newValue;
+                }
+                if (event.key === "vipOrdersCount") {
+                    totalVipOrders = event.newValue;
+                    totalOrders = parseInt(totalVipOrders) + parseInt(totalNormalOrders);
+                    vipOrdersElement.textContent = totalVipOrders;
+                    remainingOrdersElement.textContent = totalOrders;
+                }
+                if (event.key === "normalOrdersCount") {
+                    totalNormalOrders = event.newValue;
+                    totalOrders = parseInt(totalVipOrders) + parseInt(totalNormalOrders);
+                    normalOrdersElement.textContent = totalNormalOrders;
+                    remainingOrdersElement.textContent = totalOrders;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

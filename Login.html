@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>McDonald's Login</title>
+    <link rel="stylesheet" href="styles1.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>McDonald's Login</h1>
+        <div id="loginNormal">
+            <h2>Normal Customer Login</h2>
+            <form id="normalLoginForm">
+                <label for="normalEmail">Email:</label>
+                <input type="email" id="normalEmail" required>
+                <label for="normalPassword">Password:</label>
+                <input type="password" id="normalPassword" required>
+                <button type="button" id="normalLoginBtn">Login</button>
+            </form>
+            <p id="normalErrorMsg"></p>
+            <p><a href="#" onclick="showVIPLogin(); return false;">Login as VIP</a></p>
+        </div>
+        <div id="loginVIP" style="display: none;">
+            <h2>VIP Customer Login</h2>
+            <form id="vipLoginForm">
+                <label for="vipEmail">Email:</label>
+                <input type="email" id="vipEmail" required>
+                <label for="vipPassword">Password:</label>
+                <input type="password" id="vipPassword" required>
+                <button type="button" id="vipLoginBtn">Login</button>
+            </form>
+            <p id="vipErrorMsg"></p>
+            <p><a href="#" onclick="showNormalLogin(); return false;">Login as Normal Customer</a></p>
+        </div>
+    </div>
+
+    <script>
+        function showVIPLogin() {
+            document.getElementById("loginNormal").style.display = "none";
+            document.getElementById("loginVIP").style.display = "block";
+            clearErrorMsgs();
+        }
+
+        function showNormalLogin() {
+            document.getElementById("loginNormal").style.display = "block";
+            document.getElementById("loginVIP").style.display = "none";
+            clearErrorMsgs();
+        }
+
+        function clearErrorMsgs() {
+            document.getElementById("normalErrorMsg").textContent = "";
+            document.getElementById("vipErrorMsg").textContent = "";
+        }
+        
+        document.getElementById("normalLoginBtn").addEventListener("click", function() {
+    const normalEmail = document.getElementById("normalEmail").value;
+    const normalPassword = document.getElementById("normalPassword").value;
+    if (normalEmail === "normal@example.com" && normalPassword === "password") {
+        increaseOrderCount("normal");
+        window.location.href = "payment.html";  // Redirect to payment page
+    } else {
+        document.getElementById("normalErrorMsg").textContent = "Invalid email or password.";
+    }
+});
+
+document.getElementById("vipLoginBtn").addEventListener("click", function() {
+    const vipEmail = document.getElementById("vipEmail").value;
+    const vipPassword = document.getElementById("vipPassword").value;
+    if (vipEmail === "vip@example.com" && vipPassword === "password") {
+        increaseOrderCount("vip");
+        window.location.href = "payment.html";  // Redirect to payment page
+    } else {
+        document.getElementById("vipErrorMsg").textContent = "Invalid email or password.";
+    }
+});
+
+        function increaseOrderCount(customerType) {
+            let customersCount = localStorage.getItem("customersCount") || 0;
+            let vipOrdersCount = localStorage.getItem("vipOrdersCount") || 0;
+            let normalOrdersCount = localStorage.getItem("normalOrdersCount") || 0;
+
+            if (customerType === "normal") {
+                customersCount++;
+                normalOrdersCount++;
+            } else if (customerType === "vip") {
+                customersCount++;
+                vipOrdersCount++;
+            }
+
+            localStorage.setItem("customersCount", customersCount);
+            localStorage.setItem("vipOrdersCount", vipOrdersCount);
+            localStorage.setItem("normalOrdersCount", normalOrdersCount);
+        }
+    </script>
+</body>
+
+</html>

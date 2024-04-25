@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>McDonald's Manager Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>McDonald's Manager Dashboard</h1>
+
+        <div id="orderButtons">
+            <button onclick="addOrder('normal')">New Normal Order</button>
+            <button onclick="addOrder('vip')">New VIP Order</button>
+        </div>
+
+        <div id="botControls">
+            <button onclick="addBot()">+ Bot</button>
+            <button onclick="removeBot()">- Bot</button>
+        </div>
+
+        <div id="orders">
+            <h2>PENDING</h2>
+            <ul id="pendingOrders"></ul>
+
+            <h2>COMPLETE</h2>
+            <ul id="completeOrders"></ul>
+
+            <div id="orderInfo">
+                <p>Remaining orders to be delivered: <span id="remainingOrders">0</span></p>
+                <p>Number of VIP orders: <span id="vipOrders">0</span></p>
+                <p>Customers in queue: <span id="customerInQueue">0</span></p>
+                <p>Number of bots: <span id="botCount">0</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cookingBots = 0;
+        let orderNumber = 0;
+        let totalOrders = 0;
+        let totalVipOrders = 0;
+        let customerInQueue = 0;
+
+        function addOrder(type) {
+            orderNumber++;
+            totalOrders++;
+            customerInQueue++;
+
+            const order = {
+                id: orderNumber,
+                type: type
+            };
+
+            if (type === 'vip') {
+                totalVipOrders++;
+            }
+
+            const pendingOrders = document.getElementById("pendingOrders");
+            const orderItem = document.createElement("li");
+            orderItem.textContent = `Order ${order.id} - ${order.type.toUpperCase()}`;
+            pendingOrders.appendChild(orderItem);
+
+            updateOrderInfo();
+            processOrders();
+            updateLocalStorage();
+        }
+
+        function addBot() {
+            cookingBots++;
+            updateOrderInfo();
+            updateLocalStorage();
+        }
+
+        function removeBot() {
+            cookingBots = Math.max(0, cookingBots - 1);
+            updateOrderInfo();
+            updateLocalStorage();
+        }
+
+        function processOrders() {
+            const pendingOrders = document.getElementById("pendingOrders");
+            const completeOrders = document.getElementById("completeOrders");
+
+            let orderToProcess = Array.from(pendingOrders.children).find(order => order.textContent.includes("VIP"));
+            
+            if (!orderToProcess) {
+                orderToProcess = pendingOrders.firstChild;
+            }
+
+            if (orderToProcess && cookingBots > 0) {
+                setTimeout(() => {
+                    completeOrders.appendChild(orderToProcess);
+                    updateOrderStatus(orderToProcess.textContent);
+
+                    totalOrders--;
+                    if (orderToProcess.textContent.includes("VIP")) {
+                        totalVipOrders--;
+                    }
+
+                    customerInQueue--;
+                    cookingBots--;
+                    updateOrderInfo();
+                    updateLocalStorage();
+
+                    // Process next order
+                    if (pendingOrders.children.length > 0 && cookingBots > 0) {
+                        processOrders();
+                    }
+                }, 10000);
+            }
+        }
+
+        function updateOrderStatus(orderText) {
+            const completeOrders = document.getElementById("completeOrders");
+            const completedOrder = Array.from(completeOrders.children).find(order => order.textContent === orderText);
+            completedOrder.textContent = completedOrder.textContent.replace("PENDING", "COMPLETE");
+        }
+
+        function updateOrderInfo() {
+            document.getElementById("remainingOrders").textContent = Math.max(totalOrders, 0).toString();
+            document.getElementById("vipOrders").textContent = Math.max(totalVipOrders, 0).toString();
+            document.getElementById("customerInQueue").textContent = Math.max(customerInQueue, 0).toString();
+            document.getElementById("botCount").textContent = Math.max(cookingBots, 0).toString();
+        }
+
+        function updateLocalStorage() {
+            localStorage.setItem("customersCount", customerInQueue.toString());
+            localStorage.setItem("vipOrdersCount", totalVipOrders.toString());
+            localStorage.setItem("normalOrdersCount", (totalOrders - totalVipOrders).toString());
+            localStorage.setItem("remainingOrders", totalOrders.toString());
+        }
+    </script>
+</body>
+
+</html>

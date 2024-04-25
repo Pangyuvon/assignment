@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Details</title>
+    <link rel="stylesheet" href="burger.css">
+</head>
+
+<body>
+    <header>
+        <div class="back-link">
+            <a href="order.html" onclick="goBack()">Back to Menu</a>
+        </div>
+        <div class="cart-icon">
+            <span>1</span> <!-- Show the number of items in the cart -->
+            <img src="chat_icon.png" alt="Shopping Cart">
+        </div>
+    </header>
+
+    <section class="food-details">
+        <div class="food-image">
+            <img src="burger.png" alt="burger 1">
+        </div>
+        <div class="food-info">
+            <h2>McChicken®</h2>
+            <p>Price: RM5.00</p>
+            <p>Description: Your favorite chicken burger cooked to golden perfection topped with lettuce and special sauce. </p>
+            <div class="quantity">
+                <button onclick="decreaseQuantity()">-</button>
+                <span id="quantity">1</span>
+                <button onclick="increaseQuantity()">+</button>
+            </div>
+            <button onclick="checkLogin()">Submit Order</button>
+
+            <p id="price">Total Amount: RM5.00</p>
+        </div>
+    </section>
+
+    <script>
+        // Function to decrease quantity and update price
+        function decreaseQuantity() {
+            const quantityElement = document.getElementById("quantity");
+            let quantity = parseInt(quantityElement.textContent);
+            if (quantity > 1) {
+                quantity--;
+                quantityElement.textContent = quantity;
+                updatePrice(quantity);
+            }
+        }
+
+        // Function to increase quantity and update price
+        function increaseQuantity() {
+            const quantityElement = document.getElementById("quantity");
+            let quantity = parseInt(quantityElement.textContent);
+            quantity++;
+            quantityElement.textContent = quantity;
+            updatePrice(quantity);
+        }
+
+        // Function to update price based on quantity
+        function updatePrice(quantity) {
+            const priceElement = document.getElementById("price");
+            const pricePerItem = 5.00; // Price per item
+            const totalPrice = pricePerItem * quantity;
+            priceElement.textContent = "Total Amount: RM" + totalPrice.toFixed(2);
+        }
+
+        function checkLogin() {
+            // Check if user is logged in (You can add more sophisticated logic here)
+            const isLoggedIn = false; // Placeholder, you should replace this with actual login check
+
+            if (isLoggedIn) {
+                submitOrder();
+            } else {
+                alert("You need to login or register first.");
+                window.location.href = "login.html"; // Redirect to login page
+            }
+        }
+
+        function submitOrder() {
+            // Placeholder logic for submitting order
+            alert("Your order has been submitted!");
+            window.location.href = "order-tracking.html"; // Redirect to order tracking page
+        }
+    </script>
+</body>
+
+</html>
